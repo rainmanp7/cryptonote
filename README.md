@@ -1,0 +1,2 @@
+# cryptonote
+My Cryptonote Version
