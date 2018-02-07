@@ -95,7 +95,10 @@ bool Currency::generateGenesisBlock() {
 
   return true;
 }
-
+//<--rainmanp7 CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX’ is not a member of ‘CryptoNote::parameters’
+// MONEY_SUPPLY’ is not a member of ‘CryptoNote::parameters’
+// MINIMUM_FEE’ is not a member of ‘CryptoNote::parameters
+// DEFAULT_DUST_THRESHOLD’ is not a member of ‘CryptoNote::parameters
 bool Currency::getBlockReward(size_t medianSize, size_t currentBlockSize, uint64_t alreadyGeneratedCoins,
   uint64_t fee, uint64_t& reward, int64_t& emissionChange) const {
   assert(alreadyGeneratedCoins <= m_moneySupply);
