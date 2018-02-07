@@ -28,6 +28,19 @@
  * ---------------------------------------------------------------------------
  */
 
+
+#include <stddef.h>
+#include <time.h>
+#include <sys/timeb.h>
+#ifdef __APPLE__
+#include <malloc/malloc.h>
+#else
+#include <malloc.h>
+#endif
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
 #ifndef _OAES_LIB_H
 #define _OAES_LIB_H
 

@@ -37,6 +37,8 @@ namespace Crypto {
 #if !defined(_MSC_VER) || _MSC_VER >= 1800
     cn_context(const cn_context &) = delete;
     void operator=(const cn_context &) = delete;
+
+
 #endif
 
   private:
