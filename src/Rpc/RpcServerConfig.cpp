@@ -5,7 +5,8 @@
 #include "RpcServerConfig.h"
 #include "Common/CommandLine.h"
 #include "CryptoNoteConfig.h"
-
+//<--rainmanp7--> Redefined here.
+#define RPC_DEFAULT_PORT 0
 namespace CryptoNote {
 
   namespace {
