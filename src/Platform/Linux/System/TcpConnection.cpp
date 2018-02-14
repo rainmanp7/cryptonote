@@ -1,4 +1,5 @@
 // Copyright (c) 2011-2016 The Cryptonote developers
+// Copyright (c) 2014-2017 XDN-project developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -18,7 +19,7 @@ namespace System {
 TcpConnection::TcpConnection() : dispatcher(nullptr) {
 }
 
-TcpConnection::TcpConnection(TcpConnection&& other) : dispatcher(other.dispatcher) {
+TcpConnection::TcpConnection(TcpConnection and other) : dispatcher(other.dispatcher) {
   if (other.dispatcher != nullptr) {
     assert(other.contextPair.writeContext == nullptr);
     assert(other.contextPair.readContext == nullptr);
@@ -37,7 +38,7 @@ TcpConnection::~TcpConnection() {
   }
 }
 
-TcpConnection& TcpConnection::operator=(TcpConnection&& other) {
+TcpConnection& TcpConnection::operator=(TcpConnection and other) {
   if (dispatcher != nullptr) {
     assert(contextPair.readContext == nullptr);
     assert(contextPair.writeContext == nullptr);
@@ -68,146 +69,74 @@ size_t TcpConnection::read(uint8_t* data, size_t size) {
   std::string message;
   ssize_t transferred = ::recv(connection, (void *)data, size, 0);
   if (transferred == -1) {
-    if (errno != EWOULDBLOCK) {//<--rainmanp7 extraction
-      if (errno != EAGAIN) {
-        message = "recv failed, " + lastErrorMessage();
-      } else {
-        epoll_event connectionEvent;
-        OperationContext operationContext;
-        operationContext.interrupted = false;
-        operationContext.context = dispatcher->getCurrentContext();
-        contextPair.readContext = &operationContext;
-        connectionEvent.data.ptr = &contextPair;
-
-        if (contextPair.writeContext != nullptr) {
-          connectionEvent.events = EPOLLIN | EPOLLOUT | EPOLLONESHOT;
-        } else {
-          connectionEvent.events = EPOLLIN | EPOLLONESHOT;
-        }
-
-        if (epoll_ctl(dispatcher->getEpoll(), EPOLL_CTL_MOD, connection, &connectionEvent) == - 1) {
-          message = "epoll_ctl failed, " + lastErrorMessage();
-        } else {
-          dispatcher->getCurrentContext()->interruptProcedure = [&]() {
-              assert(dispatcher != nullptr);
-              assert(contextPair.readContext != nullptr);
-              epoll_event connectionEvent;
-              connectionEvent.events = 0;
-              connectionEvent.data.ptr = nullptr;
-
-              if (epoll_ctl(dispatcher->getEpoll(), EPOLL_CTL_MOD, connection, &connectionEvent) == - 1) {
-                throw std::runtime_error("TcpConnection::stop, epoll_ctl failed, " + lastErrorMessage());
-              }
-
-              contextPair.readContext->interrupted = true;
-              dispatcher->pushContext(contextPair.readContext->context);
-          };
-
-          dispatcher->dispatch();
-          dispatcher->getCurrentContext()->interruptProcedure = nullptr;
-          assert(dispatcher != nullptr);
-          assert(operationContext.context == dispatcher->getCurrentContext());
-          assert(contextPair.readContext == &operationContext);
-
-          if (operationContext.interrupted) {
-            contextPair.readContext = nullptr;
-            throw InterruptedException();
-          }
-
-          contextPair.readContext = nullptr;
-          if (contextPair.writeContext != nullptr) { //write is presented, rearm
-            epoll_event connectionEvent;
-            connectionEvent.events = EPOLLOUT | EPOLLONESHOT;
-            connectionEvent.data.ptr = &contextPair;
-
-            if (epoll_ctl(dispatcher->getEpoll(), EPOLL_CTL_MOD, connection, &connectionEvent) == - 1) {
-              message = "epoll_ctl failed, " + lastErrorMessage();
-              throw std::runtime_error("TcpConnection::read");
-            }
-          }
-
-          if ((operationContext.events & (EPOLLERR | EPOLLHUP)) != 0) {
-            throw std::runtime_error("TcpConnection::read");
-          }
-
-          ssize_t transferred = ::recv(connection, (void *) data, size, 0);
-          if (transferred == - 1) {
-            message = "recv failed, " + lastErrorMessage();
-          } else {
-            assert(transferred <= static_cast<ssize_t>(size));
-            return transferred;
-          }
-        }
-      }
+// Changed the and to the and command and removed the extra space
+    if (errno != EAGAIN and EWOULDBLOCK) {
+      message = "recv failed, " + lastErrorMessage();
     } else {
-      if (errno != EAGAIN && 0) {
-        message = "recv failed, " + lastErrorMessage();
-      } else {
-        epoll_event connectionEvent;
-        OperationContext operationContext;
-        operationContext.interrupted = false;
-        operationContext.context = dispatcher->getCurrentContext();
-        contextPair.readContext = &operationContext;
-        connectionEvent.data.ptr = &contextPair;
+      epoll_event connectionEvent;
+      OperationContext operationContext;
+      operationContext.interrupted = false;
+      operationContext.context = dispatcher->getCurrentContext();
+      contextPair.readContext = &operationContext;
+      connectionEvent.data.ptr = &contextPair;
 
-        if (contextPair.writeContext != nullptr) {
-          connectionEvent.events = EPOLLIN | EPOLLOUT | EPOLLONESHOT;
-        } else {
-          connectionEvent.events = EPOLLIN | EPOLLONESHOT;
+      if(contextPair.writeContext != nullptr) {
+        connectionEvent.events = EPOLLIN | EPOLLOUT | EPOLLONESHOT;
+      } else {
+        connectionEvent.events = EPOLLIN | EPOLLONESHOT;
+      }
+
+      if (epoll_ctl(dispatcher->getEpoll(), EPOLL_CTL_MOD, connection, &connectionEvent) == -1) {
+        message = "epoll_ctl failed, " + lastErrorMessage();
+      } else {
+        dispatcher->getCurrentContext()->interruptProcedure = [&]() {
+            assert(dispatcher != nullptr);
+            assert(contextPair.readContext != nullptr);
+            epoll_event connectionEvent;
+            connectionEvent.events = 0;
+            connectionEvent.data.ptr = nullptr;
+
+            if (epoll_ctl(dispatcher->getEpoll(), EPOLL_CTL_MOD, connection, &connectionEvent) == -1) {
+              throw std::runtime_error("TcpConnection::stop, epoll_ctl failed, " + lastErrorMessage());
+            }
+
+            contextPair.readContext->interrupted = true;
+            dispatcher->pushContext(contextPair.readContext->context);
+        };
+
+        dispatcher->dispatch();
+        dispatcher->getCurrentContext()->interruptProcedure = nullptr;
+        assert(dispatcher != nullptr);
+        assert(operationContext.context == dispatcher->getCurrentContext());
+        assert(contextPair.readContext == &operationContext);
+
+        if (operationContext.interrupted) {
+          contextPair.readContext = nullptr;
+          throw InterruptedException();
         }
 
-        if (epoll_ctl(dispatcher->getEpoll(), EPOLL_CTL_MOD, connection, &connectionEvent) == - 1) {
-          message = "epoll_ctl failed, " + lastErrorMessage();
-        } else {
-          dispatcher->getCurrentContext()->interruptProcedure = [&]() {
-              assert(dispatcher != nullptr);
-              assert(contextPair.readContext != nullptr);
-              epoll_event connectionEvent;
-              connectionEvent.events = 0;
-              connectionEvent.data.ptr = nullptr;
+        contextPair.readContext = nullptr;
+        if(contextPair.writeContext != nullptr) { //write is presented, rearm
+          epoll_event connectionEvent;
+          connectionEvent.events = EPOLLOUT | EPOLLONESHOT;
+          connectionEvent.data.ptr = &contextPair;
 
-              if (epoll_ctl(dispatcher->getEpoll(), EPOLL_CTL_MOD, connection, &connectionEvent) == - 1) {
-                throw std::runtime_error("TcpConnection::stop, epoll_ctl failed, " + lastErrorMessage());
-              }
-
-              contextPair.readContext->interrupted = true;
-              dispatcher->pushContext(contextPair.readContext->context);
-          };
-
-          dispatcher->dispatch();
-          dispatcher->getCurrentContext()->interruptProcedure = nullptr;
-          assert(dispatcher != nullptr);
-          assert(operationContext.context == dispatcher->getCurrentContext());
-          assert(contextPair.readContext == &operationContext);
-
-          if (operationContext.interrupted) {
-            contextPair.readContext = nullptr;
-            throw InterruptedException();
-          }
-
-          contextPair.readContext = nullptr;
-          if (contextPair.writeContext != nullptr) { //write is presented, rearm
-            epoll_event connectionEvent;
-            connectionEvent.events = EPOLLOUT | EPOLLONESHOT;
-            connectionEvent.data.ptr = &contextPair;
-
-            if (epoll_ctl(dispatcher->getEpoll(), EPOLL_CTL_MOD, connection, &connectionEvent) == - 1) {
-              message = "epoll_ctl failed, " + lastErrorMessage();
-              throw std::runtime_error("TcpConnection::read");
-            }
-          }
-
-          if ((operationContext.events & (EPOLLERR | EPOLLHUP)) != 0) {
+          if (epoll_ctl(dispatcher->getEpoll(), EPOLL_CTL_MOD, connection, &connectionEvent) == -1) {
+            message = "epoll_ctl failed, " + lastErrorMessage();
             throw std::runtime_error("TcpConnection::read");
           }
+        }
 
-          ssize_t transferred = ::recv(connection, (void *) data, size, 0);
-          if (transferred == - 1) {
-            message = "recv failed, " + lastErrorMessage();
-          } else {
-            assert(transferred <= static_cast<ssize_t>(size));
-            return transferred;
-          }
+        if((operationContext.events & (EPOLLERR | EPOLLHUP)) != 0) {
+          throw std::runtime_error("TcpConnection::read");
+        }
+
+        ssize_t transferred = ::recv(connection, (void *)data, size, 0);
+        if (transferred == -1) {
+          message = "recv failed, " + lastErrorMessage();
+        } else {
+          assert(transferred <= static_cast<ssize_t>(size));
+          return transferred;
         }
       }
     }
@@ -237,146 +166,77 @@ std::size_t TcpConnection::write(const uint8_t* data, size_t size) {
 
   ssize_t transferred = ::send(connection, (void *)data, size, MSG_NOSIGNAL);
   if (transferred == -1) {
-    if (errno != EWOULDBLOCK) {//<--rainmanp7 extraction
-      if (errno != EAGAIN) {
-        message = "send failed, " + lastErrorMessage();
+// ERROR becasue of space ?
+    if (errno != EAGAIN and EWOULDBLOCK) 
+{
+      message = "send failed, " + lastErrorMessage();
+    } 
+else 
+{
+      epoll_event connectionEvent;
+      OperationContext operationContext;
+      operationContext.interrupted = false;
+      operationContext.context = dispatcher->getCurrentContext();
+      contextPair.writeContext = &operationContext;
+      connectionEvent.data.ptr = &contextPair;
+
+      if(contextPair.readContext != nullptr) {
+        connectionEvent.events = EPOLLIN | EPOLLOUT | EPOLLONESHOT;
       } else {
-        epoll_event connectionEvent;
-        OperationContext operationContext;
-        operationContext.interrupted = false;
-        operationContext.context = dispatcher->getCurrentContext();
-        contextPair.writeContext = &operationContext;
-        connectionEvent.data.ptr = &contextPair;
-
-        if (contextPair.readContext != nullptr) {
-          connectionEvent.events = EPOLLIN | EPOLLOUT | EPOLLONESHOT;
-        } else {
-          connectionEvent.events = EPOLLOUT | EPOLLONESHOT;
-        }
-
-        if (epoll_ctl(dispatcher->getEpoll(), EPOLL_CTL_MOD, connection, &connectionEvent) == - 1) {
-          message = "epoll_ctl failed, " + lastErrorMessage();
-        } else {
-          dispatcher->getCurrentContext()->interruptProcedure = [&]() {
-              assert(dispatcher != nullptr);
-              assert(contextPair.writeContext != nullptr);
-              epoll_event connectionEvent;
-              connectionEvent.events = 0;
-              connectionEvent.data.ptr = nullptr;
-
-              if (epoll_ctl(dispatcher->getEpoll(), EPOLL_CTL_MOD, connection, &connectionEvent) == - 1) {
-                throw std::runtime_error("TcpConnection::stop, epoll_ctl failed, " + lastErrorMessage());
-              }
-
-              contextPair.writeContext->interrupted = true;
-              dispatcher->pushContext(contextPair.writeContext->context);
-          };
-
-          dispatcher->dispatch();
-          dispatcher->getCurrentContext()->interruptProcedure = nullptr;
-          assert(dispatcher != nullptr);
-          assert(operationContext.context == dispatcher->getCurrentContext());
-          assert(contextPair.writeContext == &operationContext);
-
-          if (operationContext.interrupted) {
-            contextPair.writeContext = nullptr;
-            throw InterruptedException();
-          }
-
-          contextPair.writeContext = nullptr;
-          if (contextPair.readContext != nullptr) { //read is presented, rearm
-            epoll_event connectionEvent;
-            connectionEvent.events = EPOLLIN | EPOLLONESHOT;
-            connectionEvent.data.ptr = &contextPair;
-
-            if (epoll_ctl(dispatcher->getEpoll(), EPOLL_CTL_MOD, connection, &connectionEvent) == - 1) {
-              message = "epoll_ctl failed, " + lastErrorMessage();
-              throw std::runtime_error("TcpConnection::write, " + message);
-            }
-          }
-
-          if ((operationContext.events & (EPOLLERR | EPOLLHUP)) != 0) {
-            throw std::runtime_error("TcpConnection::write, events & (EPOLLERR | EPOLLHUP) != 0");
-          }
-
-          ssize_t transferred = ::send(connection, (void *) data, size, 0);
-          if (transferred == - 1) {
-            message = "send failed, " + lastErrorMessage();
-          } else {
-            assert(transferred <= static_cast<ssize_t>(size));
-            return transferred;
-          }
-        }
+        connectionEvent.events = EPOLLOUT | EPOLLONESHOT;
       }
-    } else {
-      if (errno != EAGAIN && 0) {
-        message = "send failed, " + lastErrorMessage();
-      } else {
-        epoll_event connectionEvent;
-        OperationContext operationContext;
-        operationContext.interrupted = false;
-        operationContext.context = dispatcher->getCurrentContext();
-        contextPair.writeContext = &operationContext;
-        connectionEvent.data.ptr = &contextPair;
 
-        if (contextPair.readContext != nullptr) {
-          connectionEvent.events = EPOLLIN | EPOLLOUT | EPOLLONESHOT;
-        } else {
-          connectionEvent.events = EPOLLOUT | EPOLLONESHOT;
+      if (epoll_ctl(dispatcher->getEpoll(), EPOLL_CTL_MOD, connection, &connectionEvent) == -1) {
+        message = "epoll_ctl failed, " + lastErrorMessage();
+      } else {
+        dispatcher->getCurrentContext()->interruptProcedure = [&]() {
+            assert(dispatcher != nullptr);
+            assert(contextPair.writeContext != nullptr);
+            epoll_event connectionEvent;
+            connectionEvent.events = 0;
+            connectionEvent.data.ptr = nullptr;
+
+            if (epoll_ctl(dispatcher->getEpoll(), EPOLL_CTL_MOD, connection, &connectionEvent) == -1) {
+              throw std::runtime_error("TcpConnection::stop, epoll_ctl failed, " + lastErrorMessage());
+            }
+
+            contextPair.writeContext->interrupted = true;
+            dispatcher->pushContext(contextPair.writeContext->context);
+        };
+
+        dispatcher->dispatch();
+        dispatcher->getCurrentContext()->interruptProcedure = nullptr;
+        assert(dispatcher != nullptr);
+        assert(operationContext.context == dispatcher->getCurrentContext());
+        assert(contextPair.writeContext == &operationContext);
+
+        if (operationContext.interrupted) {
+          contextPair.writeContext = nullptr;
+          throw InterruptedException();
         }
 
-        if (epoll_ctl(dispatcher->getEpoll(), EPOLL_CTL_MOD, connection, &connectionEvent) == - 1) {
-          message = "epoll_ctl failed, " + lastErrorMessage();
+        contextPair.writeContext = nullptr;
+        if(contextPair.readContext != nullptr) { //read is presented, rearm
+          epoll_event connectionEvent;
+          connectionEvent.events = EPOLLIN | EPOLLONESHOT;
+          connectionEvent.data.ptr = &contextPair;
+
+          if (epoll_ctl(dispatcher->getEpoll(), EPOLL_CTL_MOD, connection, &connectionEvent) == -1) {
+            message = "epoll_ctl failed, " + lastErrorMessage();
+            throw std::runtime_error("TcpConnection::write, " + message);
+          }
+        }
+
+        if((operationContext.events & (EPOLLERR | EPOLLHUP)) != 0) {
+          throw std::runtime_error("TcpConnection::write, events & (EPOLLERR | EPOLLHUP) != 0");
+        }
+
+        ssize_t transferred = ::send(connection, (void *)data, size, 0);
+        if (transferred == -1) {
+          message = "send failed, "  + lastErrorMessage();
         } else {
-          dispatcher->getCurrentContext()->interruptProcedure = [&]() {
-              assert(dispatcher != nullptr);
-              assert(contextPair.writeContext != nullptr);
-              epoll_event connectionEvent;
-              connectionEvent.events = 0;
-              connectionEvent.data.ptr = nullptr;
-
-              if (epoll_ctl(dispatcher->getEpoll(), EPOLL_CTL_MOD, connection, &connectionEvent) == - 1) {
-                throw std::runtime_error("TcpConnection::stop, epoll_ctl failed, " + lastErrorMessage());
-              }
-
-              contextPair.writeContext->interrupted = true;
-              dispatcher->pushContext(contextPair.writeContext->context);
-          };
-
-          dispatcher->dispatch();
-          dispatcher->getCurrentContext()->interruptProcedure = nullptr;
-          assert(dispatcher != nullptr);
-          assert(operationContext.context == dispatcher->getCurrentContext());
-          assert(contextPair.writeContext == &operationContext);
-
-          if (operationContext.interrupted) {
-            contextPair.writeContext = nullptr;
-            throw InterruptedException();
-          }
-
-          contextPair.writeContext = nullptr;
-          if (contextPair.readContext != nullptr) { //read is presented, rearm
-            epoll_event connectionEvent;
-            connectionEvent.events = EPOLLIN | EPOLLONESHOT;
-            connectionEvent.data.ptr = &contextPair;
-
-            if (epoll_ctl(dispatcher->getEpoll(), EPOLL_CTL_MOD, connection, &connectionEvent) == - 1) {
-              message = "epoll_ctl failed, " + lastErrorMessage();
-              throw std::runtime_error("TcpConnection::write, " + message);
-            }
-          }
-
-          if ((operationContext.events & (EPOLLERR | EPOLLHUP)) != 0) {
-            throw std::runtime_error("TcpConnection::write, events & (EPOLLERR | EPOLLHUP) != 0");
-          }
-
-          ssize_t transferred = ::send(connection, (void *) data, size, 0);
-          if (transferred == - 1) {
-            message = "send failed, " + lastErrorMessage();
-          } else {
-            assert(transferred <= static_cast<ssize_t>(size));
-            return transferred;
-          }
+          assert(transferred <= static_cast<ssize_t>(size));
+          return transferred;
         }
       }
     }

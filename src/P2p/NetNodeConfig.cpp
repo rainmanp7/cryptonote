@@ -12,7 +12,6 @@
 #include "crypto/crypto.h"
 #include "CryptoNoteConfig.h"
 
-#define P2P_DEFAULT_PORT 0 //<--rainmanp7
 namespace CryptoNote {
 namespace {
 

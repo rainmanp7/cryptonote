@@ -17,19 +17,13 @@ using std::bad_alloc;
 
 namespace Crypto {
 
-    enum {
-        MAP_SIZE = SLOW_HASH_CONTEXT_SIZE + ((-SLOW_HASH_CONTEXT_SIZE) & 0xfff)
-    };
-
-    cn_context::~cn_context() {
-        if (munmap(data, MAP_SIZE) != 0) {
-            bad_alloc();
-        }
-    }
+  enum {
+    MAP_SIZE = SLOW_HASH_CONTEXT_SIZE + ((-SLOW_HASH_CONTEXT_SIZE) & 0xfff)
+  };
 
 #if defined(WIN32)
 
-    cn_context::cn_context() {
+  cn_context::cn_context() {
     data = VirtualAlloc(nullptr, MAP_SIZE, MEM_COMMIT, PAGE_READWRITE);
     if (data == nullptr) {
       throw bad_alloc();
@@ -44,22 +38,27 @@ namespace Crypto {
 
 #else
 
-    cn_context::cn_context() {
+  cn_context::cn_context() {
 #if !defined(__APPLE__)
-        data = mmap(nullptr, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_POPULATE, -1, 0);
+    data = mmap(nullptr, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_POPULATE, -1, 0);
 #else
-        data = mmap(nullptr, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+    data = mmap(nullptr, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
 #endif
-        if (data == MAP_FAILED) {
-            throw bad_alloc();
-        }
-        mlock(data, MAP_SIZE);
-
+    if (data == MAP_FAILED) {
+      throw bad_alloc();
     }
+    mlock(data, MAP_SIZE);
+  }
+//rainmanp7 01-14-2018
+// reconstituted the trow becasue of bad allocation block that equals 0
+  cn_context::~cn_context() {
+    if (munmap(data, MAP_SIZE) != 0) {
+      std::bad_alloc();
+    }
+      mlock(data, MAP_SIZE);
+  }
 
-
-
-//<--rainmanp7-->
 #endif
 
-};
+}
+

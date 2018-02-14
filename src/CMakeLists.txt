@@ -49,10 +49,11 @@ add_library(Transfers ${Transfers})
 add_library(Wallet ${Wallet} ${WalletLegacy})
 add_library(PaymentGate ${PaymentGate})
 add_library(JsonRpcServer ${JsonRpcServer})
+
 add_executable(Daemon ${Daemon})
 add_executable(SimpleWallet ${SimpleWallet})
 add_executable(PaymentGateService ${PaymentGateService})
-add_executable(Miner ${Miner})
+add_executable(Miner ${Miner} Miner/TransactionExtraMergeMiningTag.cpp Miner/TransactionExtraMergeMiningTag.h)
 
 if (MSVC)
   target_link_libraries(System ws2_32)

@@ -96,8 +96,7 @@ bool parse_peer_from_string(NetworkAddress& pe, const std::string& node_addr) {
 
 namespace CryptoNote
 {
-    int P2P_DEFAULT_PORT;//<--rainmanp7
-    namespace
+  namespace
   {
     const command_line::arg_descriptor<std::string> arg_p2p_bind_ip        = {"p2p-bind-ip", "Interface for p2p network protocol", "0.0.0.0"};
     const command_line::arg_descriptor<std::string> arg_p2p_bind_port      = {"p2p-bind-port", "Port for p2p network protocol", std::to_string(CryptoNote::P2P_DEFAULT_PORT)};

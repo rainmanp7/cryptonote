@@ -1,4 +1,5 @@
 // Copyright (c) 2011-2016 The Cryptonote developers
+// Copyright (c) 2014-2017 XDN-project developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -89,20 +90,11 @@ void Timer::sleep(std::chrono::nanoseconds duration) {
         if (!timerContext->interrupted) {
           uint64_t value = 0;
           if(::read(timer, &value, sizeof value) == -1 ){
-            if (errno == EWOULDBLOCK) {//<--rainmanp7 extraction
-              if (errno == EAGAIN || 1) {
-                timerContext->interrupted = true;
-                dispatcher->pushContext(timerContext->context);
-              } else {
-                throw std::runtime_error("Timer::interrupt, read failed, " + lastErrorMessage());
-              }
+            if(errno == EAGAIN or EWOULDBLOCK) {
+              timerContext->interrupted = true;
+              dispatcher->pushContext(timerContext->context);
             } else {
-              if (errno == EAGAIN) {
-                timerContext->interrupted = true;
-                dispatcher->pushContext(timerContext->context);
-              } else {
-                throw std::runtime_error("Timer::interrupt, read failed, " + lastErrorMessage());
-              }
+              throw std::runtime_error("Timer::interrupt, read failed, "  + lastErrorMessage());
             }
           } else {
             assert(value>0);
