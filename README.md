@@ -7,8 +7,10 @@ Cryptonote Remodified and Rebuilt by rainmanp7
 GCC version = GNU 7.2.0
 BOOST = Boost version: 1.55.0
 CMAKE = 3.9 or 3.10
-Removed = Connecectivity tool
-100% Qualified built time 0 errors.
+<br>
+Removed = Conecectivity tool
+<br>
+Qualified built time 0 errors.
 Operating system = lunbuntu 17.10
 <Br>
 <Hr>
