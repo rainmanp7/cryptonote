@@ -8,7 +8,7 @@ GCC version = GNU 7.2.0
 BOOST = Boost version: 1.55.0
 CMAKE = 3.9 or 3.10
 Removed = Connecectivity tool
-Qualified built time 0 errors = 10:02 pm 01-14-2018
+100% Qualified built time 0 errors.
 Operating system = lunbuntu 17.10
 <Br>
 <Hr>
