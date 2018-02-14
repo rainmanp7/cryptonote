@@ -5,5 +5,8 @@
 #include "BlockingQueue.h"
 
 namespace {
-char suppressMSVCWarningLNK4221;
+#if defined(MSVC) || defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+    char suppressMSVCWarningLNK4221;
+#endif
 }
+

@@ -1,4 +1,5 @@
 // Copyright (c) 2011-2016 The Cryptonote developers
+// Copyright (c) 2014-2017 XDN-project developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -81,20 +82,19 @@ namespace Tools
       {
         assert(1 <= size && size <= sizeof(uint64_t));
 
-
-          uint64_t res = 0;
-          switch (9 - size)
-          {
-              case 1:            res |= *data++; /* FALLTHRU *///rainmanp7
-              case 2: res <<= 8; res |= *data++; /* FALLTHRU */
-              case 3: res <<= 8; res |= *data++; /* FALLTHRU */
-              case 4: res <<= 8; res |= *data++; /* FALLTHRU */
-              case 5: res <<= 8; res |= *data++; /* FALLTHRU */
-              case 6: res <<= 8; res |= *data++; /* FALLTHRU */
-              case 7: res <<= 8; res |= *data++; /* FALLTHRU */
-              case 8: res <<= 8; res |= *data; break;
-              default: assert(false);
-          }
+        uint64_t res = 0;
+        switch (9 - size)
+        {
+        case 1:            res |= *data++; /* FALLTHRU */
+        case 2: res <<= 8; res |= *data++; /* FALLTHRU */
+        case 3: res <<= 8; res |= *data++; /* FALLTHRU */
+        case 4: res <<= 8; res |= *data++; /* FALLTHRU */
+        case 5: res <<= 8; res |= *data++; /* FALLTHRU */
+        case 6: res <<= 8; res |= *data++; /* FALLTHRU */
+        case 7: res <<= 8; res |= *data++; /* FALLTHRU */
+        case 8: res <<= 8; res |= *data; break;
+        default: assert(false);
+        }
 
         return res;
       }
