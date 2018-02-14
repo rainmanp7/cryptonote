@@ -1,12 +1,16 @@
 This is the reference code for [CryptoNote](https://cryptonote.org) cryptocurrency protocol.
+<Br>
+<Hr><H3>
 Remodified and Rebuilt by rainmanp7
+</H3>
 GCC version = GNU 7.2.0
 BOOST = Boost version: 1.55.0
 CMAKE = 3.9 or 3.10
 Removed = Connecectivity tool
 Qualified built time 0 errors = 10:02 pm 01-14-2018
 Operating system = lunbuntu 17.10
-
+<Br>
+<Hr>
 * Launch your own CryptoNote currency: [CryptoNote Starter](https://cryptonotestarter.org/)
 * CryptoNote reference implementation: [CryptoNoteCoin](https://cryptonote-coin.org)
 * Discussion board and support: [CryptoNote Forum](https://forum.cryptonote.org)
