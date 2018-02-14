@@ -7,33 +7,6 @@ Removed = Connecectivity tool
 Qualified built time 0 errors = 10:02 pm 01-14-2018
 Operating system = lunbuntu 17.10
 
-rainmanp7@rainmanp7-VirtualBox:~/PHF-Transfer/cryptonote$ make -j2
--- The C compiler identification is GNU 7.2.0
--- The CXX compiler identification is GNU 7.2.0
--- Check for working C compiler: /usr/bin/cc
--- Check for working C compiler: /usr/bin/cc -- works
--- Detecting C compiler ABI info
--- Detecting C compiler ABI info - done
--- Detecting C compile features
--- Detecting C compile features - done
--- Check for working CXX compiler: /usr/bin/c++
--- Check for working CXX compiler: /usr/bin/c++ -- works
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Detecting CXX compile features
--- Detecting CXX compile features - done
--- Boost version: 1.55.0
--- Found the following Boost libraries:
---   system
---   filesystem
---   thread
---   date_time
---   chrono
---   regex
---   serialization
---   program_options
---   atomic
-
 * Launch your own CryptoNote currency: [CryptoNote Starter](https://cryptonotestarter.org/)
 * CryptoNote reference implementation: [CryptoNoteCoin](https://cryptonote-coin.org)
 * Discussion board and support: [CryptoNote Forum](https://forum.cryptonote.org)
