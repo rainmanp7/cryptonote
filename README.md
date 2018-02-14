@@ -1,7 +1,7 @@
 This is the reference code for [CryptoNote](https://cryptonote.org) cryptocurrency protocol.
 <Br>
 <Hr><H3>
-Remodified and Rebuilt by rainmanp7
+Cryptonote Remodified and Rebuilt by rainmanp7
 </H3>
 GCC version = GNU 7.2.0
 BOOST = Boost version: 1.55.0
