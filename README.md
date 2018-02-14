@@ -3,10 +3,10 @@ This is the reference code for [CryptoNote](https://cryptonote.org) cryptocurren
 <Hr><H3>
 Cryptonote Remodified and Rebuilt by rainmanp7
 </H3>
-02-14-2018 Wed. 10:38pm
-GCC version = GNU 7.2.0
-BOOST = Boost version: 1.55.0
-CMAKE = 3.9 or 3.10
+02-14-2018 Wed. 10:38pm<br>
+GCC version = GNU 7.2.0<br>
+Boost version: 1.55.0<br>
+CMAKE = 3.9 or 3.10<br>
 <br>
 Removed = Conecectivity tool
 <br>
