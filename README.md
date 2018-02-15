@@ -10,7 +10,6 @@ CMAKE = 3.9 or 3.10<br>
 <br>
 Removed = Conecectivity tool
 <br>
-Qualified built time 0 errors.
 Operating system = lunbuntu 17.10
 <Br>
 <Hr>
