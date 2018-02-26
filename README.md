@@ -7,6 +7,7 @@ Cryptonote Remodified and Rebuilt by rainmanp7
 GCC version = GNU 7.2.0<br>
 Boost version: 1.55.0<br>
 CMAKE = 3.9 or 3.10<br>
+Upgrading to a higher Boost Version.
 <br>
 Removed = Conecectivity tool
 <br>
