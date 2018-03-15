@@ -1,22 +1,7 @@
 [![Build Status](https://travis-ci.org/rainmanp7/cryptonote.svg?branch=master)](https://travis-ci.org/rainmanp7/cryptonote)
 
+This is the reference code for [CryptoNote](https://cryptonote.org) cryptocurrency protocol.
 
-  This is the reference code for [CryptoNote](https://cryptonote.org) cryptocurrency protocol.
-<Br>
-<Hr><H3>
-Cryptonote Remodified and Rebuilt by rainmanp7
-</H3>
-02-14-2018 Wed. 10:38pm<br>
-GCC version = GNU 7.2.0<br>
-Boost version: 1.55.0<br>
-CMAKE = 3.9 or 3.10<br>
-Upgrading to a higher Boost Version.
-<br>
-Removed = Conecectivity tool
-<br>
-Operating system = lunbuntu 17.10
-<Br>
-<Hr>
 * Launch your own CryptoNote currency: [CryptoNote Starter](https://cryptonotestarter.org/)
 * CryptoNote reference implementation: [CryptoNoteCoin](https://cryptonote-coin.org)
 * Discussion board and support: [CryptoNote Forum](https://forum.cryptonote.org)
