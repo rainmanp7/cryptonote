@@ -1,4 +1,7 @@
-This is the reference code for [CryptoNote](https://cryptonote.org) cryptocurrency protocol.
+[![Build Status](https://travis-ci.org/rainmanp7/cryptonote.svg?branch=master)](https://travis-ci.org/rainmanp7/cryptonote)
+
+
+  This is the reference code for [CryptoNote](https://cryptonote.org) cryptocurrency protocol.
 <Br>
 <Hr><H3>
 Cryptonote Remodified and Rebuilt by rainmanp7
